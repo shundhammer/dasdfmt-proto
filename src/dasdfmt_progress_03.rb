@@ -17,27 +17,35 @@ module Yast
     include Yast::Logger
 
     TIMEOUT_MILLISEC = 10
-    MAX_PROGRESS = 42
 
-    def initialize(total_cyl)
+    def initialize
       textdomain "s390"
-      @total_cyl = total_cyl
       @cyl = 0
       @progress = 0 # percent
     end
 
-    def run
+    def run_demo(total_cyl:, max_progress: 100)
+      @total_cyl = total_cyl
+      @max_progress = max_progress
+
+      open
+      demo_event_loop(max_progress)
+      close
+    end
+
+    def open
       UI.OpenDialog(dialog_content)
-      demo_event_loop # Runs until 42%
+    end
+
+    def close
       UI.CloseDialog
     end
 
     def dialog_content
-      MarginBox(1, 0.45, dialog_vbox)
-    end
-
-    def dialog_vbox
-      VBox(
+      MarginBox(
+        1, # left and right margin
+        0.45, # top and bottom margin; NCurses rounds this down to 0
+        VBox(
           Heading(_("Formatting DASDs")),
           MinHeight(7, tables),
           VSpacing(1),
@@ -45,6 +53,7 @@ module Yast
           VSpacing(1),
           PushButton(Id(:abort), _("Abort"))
         )
+      )
     end
 
     def tables
@@ -105,12 +114,12 @@ module Yast
       ]
     end
 
-    def demo_event_loop
+    def demo_event_loop(max_progress = 100)
       loop do
         id = UI.TimeoutUserInput(TIMEOUT_MILLISEC)
         case id
         when :timeout
-          update_cyl(@cyl + 1 ) if @progress < MAX_PROGRESS
+          update_cyl(@cyl + 1 ) if @progress < max_progress
 
         when :abort, :cancel # :cancel is WM_CLOSE
           # Break the loop
@@ -132,4 +141,4 @@ module Yast
   end
 end
 
-Yast::DasdFmtProgress.new(420).run
+Yast::DasdFmtProgress.new.run_demo(total_cyl: 420, max_progress: 42)
