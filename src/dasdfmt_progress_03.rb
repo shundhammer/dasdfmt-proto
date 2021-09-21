@@ -80,7 +80,7 @@ module Yast
         Header(
           Right(_("Channel ID")),
           ("Device"),
-          Right(_("Cyl.") + ' ' * 4) # reserve some space in for more digits
+          Right(_("Cyl.") + ' ' * 4) # reserve some space for more digits
         ),
         in_progress_items
       )
