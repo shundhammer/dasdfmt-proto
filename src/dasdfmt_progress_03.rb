@@ -128,8 +128,8 @@ module Yast
       id = UI.PollInput
       case id
       when :abort, :cancel # :cancel is WM_CLOSE
-        # TO DO: Open a confirmation popup if the user really wants to abort
-        # the ongoing formatting operation.
+        # TO DO: Open a confirmation popup asking if the user really wants to
+        # abort the ongoing formatting operation.
         return :cancel
       end
     end
