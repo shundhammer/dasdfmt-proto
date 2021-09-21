@@ -78,7 +78,11 @@ module Yast
     def in_progress_table
       Table(
         Id(:in_progress_table),
-        Header(Right(_("Channel ID")), ("Device"), Right(_("Cyl."))),
+        Header(
+          Right(_("Channel ID")),
+          ("Device"),
+          Right(_("Cyl.") + ' ' * 4) # reserve some space in for more digits
+        ),
         in_progress_items
       )
     end
@@ -137,6 +141,15 @@ module Yast
     def update_cyl(cyl)
       @cyl = cyl
       update_progress(100 * @cyl / @total_cyl)
+      # Updating just some DASDs just for the demo
+      update_cell(Id(:dasdb), cyl, 420)
+      update_cell(Id(:dasdc), cyl, 300)
+    end
+
+    def update_cell(item_id, cyl, total_cyl)
+      return if cyl > total_cyl
+
+      UI.ChangeWidget(Id(:in_progress_table), Cell(item_id, 2), format_cyl(cyl, total_cyl))
     end
   end
 end
