@@ -117,6 +117,25 @@ module Yast
       ]
     end
 
+    # Event handler (not a loop!) for the real application.
+    #
+    # This should be called in regular intervals during listening for progress
+    # output of the dasdfmt command so the application remains responsive; in
+    # particular for responding to the user hitting the "Abort" button. This is
+    # not just a luxury: If a formatting operation is stuck, the user needs to
+    # be able to interrupt it and start over.
+    def event_handler
+      id = UI.PollInput
+      case id
+      when :abort, :cancel # :cancel is WM_CLOSE
+        # TO DO: Open a confirmation popup if the user really wants to abort
+        # the ongoing formatting operation.
+        return :cancel
+      end
+    end
+
+    # Event loop just for this demo. Not needed or desired in the real
+    # application.
     def demo_event_loop(max_progress = 100)
       loop do
         id = UI.TimeoutUserInput(TIMEOUT_MILLISEC)
@@ -141,11 +160,17 @@ module Yast
       @cyl = cyl
       update_progress(100 * @cyl / @total_cyl)
       # Updating just some DASDs just for the demo
-      update_cell(Id(:dasdb), cyl, 420)
-      update_cell(Id(:dasdc), cyl, 300)
+      update_cyl_cell(Id(:dasdb), cyl, 420)
+      update_cyl_cell(Id(:dasdc), cyl, 300)
     end
 
-    def update_cell(item_id, cyl, total_cyl)
+    # Update the cylinder cell for one item of the "In Progress" table.
+    #
+    # @param item_id [Term] ID of the table item to update
+    # @param cyl [Integer] Current cylinder of that DASD
+    # @param total_cyl [Integer] Total number of cylinders of that DASD
+    #
+    def update_cyl_cell(item_id, cyl, total_cyl)
       return if cyl > total_cyl
 
       UI.ChangeWidget(Id(:in_progress_table), Cell(item_id, 2), format_cyl(cyl, total_cyl))
