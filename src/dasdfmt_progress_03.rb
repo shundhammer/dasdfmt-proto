@@ -26,7 +26,6 @@ module Yast
 
     def run_demo(total_cyl:, max_progress: 100)
       @total_cyl = total_cyl
-      @max_progress = max_progress
 
       open
       demo_event_loop(max_progress)
