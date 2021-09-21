@@ -58,7 +58,7 @@ module Yast
     def tables
       HBox(
         MinWidth(
-          35,
+          38,
           VBox(
             Left(Label(_("In Progress"))),
             in_progress_table)
@@ -80,7 +80,7 @@ module Yast
         Header(
           Right(_("Channel ID")),
           ("Device"),
-          Right(_("Cyl.") + ' ' * 4) # reserve some space for more digits
+          Right(_("Cyl.") + ' ' * 6) # reserve some space for more digits
         ),
         in_progress_items
       )
