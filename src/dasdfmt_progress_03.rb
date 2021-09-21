@@ -1,4 +1,4 @@
-# Start with:   /usr/lib/YaST2/bin/y2start ./dasdfmt_progress_02.rb qt
+# Start with:   /usr/lib/YaST2/bin/y2start ./dasdfmt_progress_03.rb qt
 #
 # Notice that this demo will run until 42%, then it will stop.
 # Use the "Abort" button or the window manager [x] button to close.
@@ -33,16 +33,13 @@ module Yast
     end
 
     def dialog_content
-      MinSize(
-        60, 15,
-        MarginBox(1, 0.45, dialog_vbox)
-      )
+      MarginBox(1, 0.45, dialog_vbox)
     end
 
     def dialog_vbox
       VBox(
           Heading(_("Formatting DASDs")),
-          tables,
+          MinHeight(7, tables),
           VSpacing(1),
           ProgressBar(Id(:progress_bar), _("Total Progress"), 100, 0),
           VSpacing(1),
@@ -52,16 +49,15 @@ module Yast
 
     def tables
       HBox(
-        HWeight(
-          60,
+        MinWidth(
+          35,
           VBox(
             Left(Label(_("In Progress"))),
-            in_progress_table
-          )
+            in_progress_table)
         ),
-        HSpacing(5),
-        HWeight(
-          40,
+        HSpacing(4),
+        MinWidth(
+          26,
           VBox(
             Left(Label(_("Done"))),
             done_table
@@ -73,35 +69,39 @@ module Yast
     def in_progress_table
       Table(
         Id(:in_progress_table),
-        Header(_("Device"), Right(_("Cyl.")), Right(_("Tot. Cyl"))),
+        Header(Right(_("Channel ID")), ("Device"), Right(_("Cyl."))),
         in_progress_items
       )
     end
 
     def in_progress_items
       [
-        Item(Id(:dasda), "/dev/dasda", @cyl, 200),
-        Item(Id(:dasdb), "/dev/dasdb", @cyl, 420),
-        Item(Id(:dasdc), "/dev/dasdc", @cyl, 300),
-        Item(Id(:dasdd), "/dev/dasdd", @cyl, 200),
-        Item(Id(:dasde), "/dev/dasde", @cyl, 200),
-        Item(Id(:dasdf), "/dev/dasdf", @cyl, 200),
-        Item(Id(:dasdg), "/dev/dasdg", @cyl, 200),
-        Item(Id(:dasdh), "/dev/dasdh", @cyl, 200)
+        Item(Id(:dasda), "0.0.01b17", "/dev/dasda", format_cyl(@cyl, 200)),
+        Item(Id(:dasdb), "0.0.01b18", "/dev/dasdb", format_cyl(@cyl, 420)),
+        Item(Id(:dasdc), "0.0.01b1d", "/dev/dasdc", format_cyl(@cyl, 300)),
+        Item(Id(:dasdd), "0.0.0bd71", "/dev/dasdd", format_cyl(@cyl, 200)),
+        Item(Id(:dasde), "0.0.0be80", "/dev/dasde", format_cyl(@cyl, 200)),
+        Item(Id(:dasdf), "0.0.0c10d", "/dev/dasdf", format_cyl(@cyl, 200)),
+        Item(Id(:dasdg), "0.0.0c10e", "/dev/dasdg", format_cyl(@cyl, 200)),
+        Item(Id(:dasdh), "0.0.0c42f", "/dev/dasdh", format_cyl(@cyl, 200))
       ]
+    end
+
+    def format_cyl(current_cyl, total_cyl)
+      "#{current_cyl}/#{total_cyl}"
     end
 
     def done_table
       Table(
         Id(:done_table),
-        Header(_("Device")),
+        Header(Right(_("Channel ID")), _("Device")),
         done_items
       )
     end
 
     def done_items
       [
-        Item(Id(:dasdx), "/dev/dasdx")
+        Item(Id(:dasdx), "0.0.42c7", "/dev/dasdx")
       ]
     end
 
